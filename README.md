@@ -1,4 +1,4 @@
-# Bob Realtime Chat App Using React and Firebase
+# Bob Realtime Chat App
 
 ![thumbs1](https://raw.githubusercontent.com/boby177/bob-chat-app/main/src/imgs/thumbs/img-1.png)
 
