@@ -1,46 +1,47 @@
+import { onSnapshot, doc } from "firebase/firestore";
 import React from "react";
+import { useContext } from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { ChatContext } from "../context/ChatContext";
+import { db } from "../firebase";
 
 const Chats = () => {
+  const [chats, setChats] = useState([]);
 
+  const { currentUser } = useContext(AuthContext);
+  const { dispatch } = useContext(ChatContext);
+
+  useEffect(() => {
+    const getChats = () => {
+      const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
+        setChats(doc.data());
+      });
+
+      return () => {
+        unsub();
+      };
+    };
+
+    currentUser.uid && getChats();
+  }, [currentUser.uid]);
+
+  const handleSelect = (u) => {
+    dispatch({type:"CHANGE_USER", payload: u})
+  }
   return (
     <div className="chats">
-      <div className="userChat">
-        <img
-          src="https://images.pexels.com/photos/2613260/pexels-photo-2613260.jpeg?auto=compress&cs=tinysrgb&w=600"
-          alt=""
-        />
-        <div className="userChatInfo">
-          <span>Pazani</span>
-          <p>
-            Hello is this Mrs. Jane? My name is Pazani, i really interested
-            about your products, can i ask you a few
-            question?
-          </p>
-          <p style={{ color: "wheat" }}>12:10 pm</p>
+      {Object.entries(chats)?.sort((a,b)=>b[1].date - a[1].date).map((chat) => (
+        <div className="userChat" key={chat[0]} onClick={()=>handleSelect(chat[1].userInfo)}>
+          <img src={chat[1].userInfo.photoURL} alt="" />
+          <div className="userChatInfo">
+            <span>{chat[1].userInfo.displayName}</span>
+            <p>{chat[1].lastMessage?.text}</p>
+            {/* <p style={{ color: "wheat" }}>{chat[1].date?.seconds}</p> */}
+          </div>
         </div>
-      </div>
-      <div className="userChat">
-        <img
-          src="https://images.pexels.com/photos/2787341/pexels-photo-2787341.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          alt=""
-        />
-        <div className="userChatInfo">
-          <span>Tina</span>
-          <p>Hi Jane</p>
-          <p style={{ color: "wheat" }}>10:30 am</p>
-        </div>
-      </div>
-      <div className="userChat">
-        <img
-          src="https://images.pexels.com/photos/2104252/pexels-photo-2104252.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          alt=""
-        />
-        <div className="userChatInfo">
-          <span>Amber</span>
-          <p>Good Morning, have a nice day</p>
-          <p style={{ color: "wheat" }}>07:48 am</p>
-        </div>
-      </div>
+      ))}
     </div>
   );
 };
