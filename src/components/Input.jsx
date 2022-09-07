@@ -16,7 +16,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 const Input = () => {
   const [text, setText] = useState("");
-  const [img, setImg] = useState("");
+  const [img, setImg] = useState(null);
 
   const { currentUser } = useContext(AuthContext);
   const { data } = useContext(ChatContext);
@@ -28,9 +28,8 @@ const Input = () => {
       const uploadTask = uploadBytesResumable(storageRef, img);
 
       uploadTask.on(
-        //TODO:Handle Percentage
         (error) => {
-          // setErr(true);
+          //TODO:Handle Error
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
@@ -64,16 +63,16 @@ const Input = () => {
       [data.chatId + ".date"]: serverTimestamp(),
     });
 
-  await updateDoc(doc(db, "userChats", data.user.uid), {
-    [data.chatId + ".lastMessage"]: {
-      text,
-    },
-    [data.chatId + ".date"]: serverTimestamp(),
-  });
-  
-  setText("");
-  setImg(null);
-};
+    await updateDoc(doc(db, "userChats", data.user.uid), {
+      [data.chatId + ".lastMessage"]: {
+        text,
+      },
+      [data.chatId + ".date"]: serverTimestamp(),
+    });
+
+    setText("");
+    setImg(null);
+  };
 
   return (
     <div className="input">
@@ -84,18 +83,15 @@ const Input = () => {
         value={text}
       />
       <div className="send">
+        <img src={Attachment} alt="" />
         <input
           type="file"
           style={{ display: "none" }}
           id="file"
           onChange={(e) => setImg(e.target.files[0])}
         />
-        <label htmlFor="file">
-          <img src={Attachment} alt="" />
-        </label>
 
-        <input type="file" style={{ display: "none" }} id="image" />
-        <label htmlFor="image">
+        <label htmlFor="file">
           <img src={Image} alt="" />
         </label>
         <button onClick={handleSend}>Send</button>
