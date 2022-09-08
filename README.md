@@ -1,8 +1,6 @@
 # Bob Realtime Chat App
 
-![thumbs1](https://raw.githubusercontent.com/boby177/bob-chat-app/main/src/imgs/thumbs/img-1.png)
-
-![thumbs2](https://raw.githubusercontent.com/boby177/bob-chat-app/main/src/imgs/thumbs/img-2.png)
+![thumbs2](https://raw.githubusercontent.com/boby177/bob-chat-app/main/src/imgs/thumbs/img-3.png)
 
 ## Available Scripts
 
